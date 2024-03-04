@@ -21,6 +21,7 @@ public:
 	void ExpandLeafNodesDFS(std::stack<State>& frontier, std::stack<std::string>& Path, int& numberOfNodes);
 	void ExpandLeafNodesBFS(std::queue<State>& frontier, std::stack<std::string>& Path, int& numberOfNodes);
 	void ExpandLeafNodesGBFS(std::list<State>& frontier, std::stack<std::string>& Path, int& numberOfNodes);
+	void ExpandLeafNodesAS(std::list<State*>& frontier, std::stack<std::string>& Path, int& numberOfNodes);
 	void ExpandLeafNodesDLS(std::stack<State*>& frontier, std::stack<std::string>& Path, int maxDepth, int& numberOfNodes);
 
 	bool UpNodeIsValid(State& node);
@@ -31,7 +32,8 @@ public:
 
 	void AddNodeToStack(State& node, std::stack<State>& frontier, std::string nodeToAddPosition);
 	void AddNodeToQueue(State& node, std::queue<State>& frontier, std::string nodeToAddPosition);
-	void AddNodeToList(State& node, std::list<State>& frontier, std::string nodeToAddPosition, std::string algoName);
+	void AddNodeToList(State& node, std::list<State>& frontier, std::string nodeToAddPosition);
+	void AddNodePointerToList(State& node, std::list<State*>& frontier, std::string nodeToAddPosition);
 	void AddNodePointerToStack(State& node, std::stack<State*>& frontier, std::string nodeToAddPosition);
 
 	void RemoveNodeFromStack(State& node, std::stack<State>& frontier);

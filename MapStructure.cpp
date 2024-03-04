@@ -150,56 +150,56 @@ void MapStructure::AddNodeToQueue(State& node, queue<State>& frontier, string no
 	}
 }
 
-void MapStructure::AddNodeToList(State& node, list<State>& frontier, string nodeToAddPosition, string algoName) {
-	if (algoName == "GBFS") {
-		if (nodeToAddPosition == "up") {
-			State* UpNode = new State(node.GetXPosition(), node.GetYPosition() - 1);
-			UpNode->parentNodePointer = tempParentNodePointer;
-			frontier.push_back(*UpNode);
-		}
-		else if (nodeToAddPosition == "left") {
-			State* LeftNode = new State(node.GetXPosition() - 1, node.GetYPosition());
-			LeftNode->parentNodePointer = tempParentNodePointer;
-			frontier.push_back(*LeftNode);
-		}
-		else if (nodeToAddPosition == "down") {
-			State* DownNode = new State(node.GetXPosition(), node.GetYPosition() + 1);
-			DownNode->parentNodePointer = tempParentNodePointer;
-			frontier.push_back(*DownNode);
-		}
-		else if (nodeToAddPosition == "right") {
-			State* RightNode = new State(node.GetXPosition() + 1, node.GetYPosition());
-			RightNode->parentNodePointer = tempParentNodePointer;
-			frontier.push_back(*RightNode);
-		}
+void MapStructure::AddNodeToList(State& node, list<State>& frontier, string nodeToAddPosition) {
+	if (nodeToAddPosition == "up") {
+		State* UpNode = new State(node.GetXPosition(), node.GetYPosition() - 1);
+		UpNode->parentNodePointer = tempParentNodePointer;
+		frontier.push_back(*UpNode);
 	}
-	else if (algoName == "AS") {
-		if (nodeToAddPosition == "up") {
-			State* UpNode = new State(node.GetXPosition(), node.GetYPosition() - 1);
-			UpNode->parentNodePointer = tempParentNodePointer;
-			UpNode->SetCostToState(tempParentNodePointer->GetCostToState() + 1);
-			frontier.push_back(*UpNode);
-		}
-		else if (nodeToAddPosition == "left") {
-			State* LeftNode = new State(node.GetXPosition() - 1, node.GetYPosition());
-			LeftNode->parentNodePointer = tempParentNodePointer;
-			LeftNode->SetCostToState(tempParentNodePointer->GetCostToState() + 1);
-			frontier.push_back(*LeftNode);
-		}
-		else if (nodeToAddPosition == "down") {
-			State* DownNode = new State(node.GetXPosition(), node.GetYPosition() + 1);
-			DownNode->parentNodePointer = tempParentNodePointer;
-			DownNode->SetCostToState(tempParentNodePointer->GetCostToState() + 1);
-			frontier.push_back(*DownNode);
-		}
-		else if (nodeToAddPosition == "right") {
-			State* RightNode = new State(node.GetXPosition() + 1, node.GetYPosition());
-			RightNode->parentNodePointer = tempParentNodePointer;
-			RightNode->SetCostToState(tempParentNodePointer->GetCostToState() + 1);
-			frontier.push_back(*RightNode);
-		}
+	else if (nodeToAddPosition == "left") {
+		State* LeftNode = new State(node.GetXPosition() - 1, node.GetYPosition());
+		LeftNode->parentNodePointer = tempParentNodePointer;
+		frontier.push_back(*LeftNode);
+	}
+	else if (nodeToAddPosition == "down") {
+		State* DownNode = new State(node.GetXPosition(), node.GetYPosition() + 1);
+		DownNode->parentNodePointer = tempParentNodePointer;
+		frontier.push_back(*DownNode);
+	}
+	else if (nodeToAddPosition == "right") {
+		State* RightNode = new State(node.GetXPosition() + 1, node.GetYPosition());
+		RightNode->parentNodePointer = tempParentNodePointer;
+		frontier.push_back(*RightNode);
 	}
 }
+
+void MapStructure::AddNodePointerToList(State& node, std::list<State*>& frontier, std::string nodeToAddPosition) {
+	if (nodeToAddPosition == "up") {
+		State* UpNode = new State(node.GetXPosition(), node.GetYPosition() - 1);
+		UpNode->parentNodePointer = tempParentNodePointer;
+		UpNode->SetCostToState(UpNode->parentNodePointer->GetCostToState() + 1);
+		frontier.push_back(UpNode);
+	}
+	else if (nodeToAddPosition == "left") {
+		State* LeftNode = new State(node.GetXPosition() - 1, node.GetYPosition());
+		LeftNode->parentNodePointer = tempParentNodePointer;
+		LeftNode->SetCostToState(LeftNode->parentNodePointer->GetCostToState() + 1);
+		frontier.push_back(LeftNode);
+	}
+	else if (nodeToAddPosition == "down") {
+		State* DownNode = new State(node.GetXPosition(), node.GetYPosition() + 1);
+		DownNode->parentNodePointer = tempParentNodePointer;
+		DownNode->SetCostToState(DownNode->parentNodePointer->GetCostToState() + 1);
+		frontier.push_back(DownNode);
+	}
+	else if (nodeToAddPosition == "right") {
+		State* RightNode = new State(node.GetXPosition() + 1, node.GetYPosition());
+		RightNode->parentNodePointer = tempParentNodePointer;
+		RightNode->SetCostToState(RightNode->parentNodePointer->GetCostToState() + 1);
+		frontier.push_back(RightNode);
+	}
+}
+
 
 void MapStructure::AddNodePointerToStack(State& node, std::stack<State*>& frontier, std::string nodeToAddPosition) {
 	if (nodeToAddPosition == "up") {
@@ -265,6 +265,8 @@ void MapStructure::PrintPath(State& node, stack<string> Path) {
 }
 
 void MapStructure::ExpandFromRootNode(std::string algoName) {
+	chosenGoalState.first = 7;
+	chosenGoalState.second = 0;
 	State* rootNodePointer = new State(InitialPosition.first, InitialPosition.second);
 	tempParentNodePointer = rootNodePointer;
 	int numberOfNodes = 1;
@@ -339,20 +341,20 @@ void MapStructure::ExpandFromRootNode(std::string algoName) {
 		}
 		else {
 			if (UpNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "up", "GBFS");
-				numberOfNodes++;
+				AddNodeToList(*rootNodePointer, listFrontier, "up");
+				MapRepresentation[listFrontier.back().GetXPosition()][listFrontier.back().GetYPosition()] = "added to list";
 			}
 			if (LeftNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "left", "GBFS");
-				numberOfNodes++;
+				AddNodeToList(*rootNodePointer, listFrontier, "left");
+				MapRepresentation[listFrontier.back().GetXPosition()][listFrontier.back().GetYPosition()] = "added to list";
 			}
 			if (DownNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "down", "GBFS");
-				numberOfNodes++;
+				AddNodeToList(*rootNodePointer, listFrontier, "down");
+				MapRepresentation[listFrontier.back().GetXPosition()][listFrontier.back().GetYPosition()] = "added to list";
 			}
 			if (RightNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "right", "GBFS");
-				numberOfNodes++;
+				AddNodeToList(*rootNodePointer, listFrontier, "right");
+				MapRepresentation[listFrontier.back().GetXPosition()][listFrontier.back().GetYPosition()] = "added to list";
 			}
 			listFrontier.sort([&](State firstNode, State secondNode)
 				{ return abs(chosenGoalState.first - firstNode.GetXPosition()) + abs(chosenGoalState.second - firstNode.GetYPosition()) <
@@ -361,32 +363,32 @@ void MapStructure::ExpandFromRootNode(std::string algoName) {
 		}
 	}
 	else if (algoName == "AS") {
-		list<State> listFrontier;
+		list<State*> listFrontier;
 		if (IsGoalState(*rootNodePointer)) {
 			cout << "Initial position is goal state." << endl;
 		}
 		else {
 			(*rootNodePointer).SetCostToState(0);
 			if (UpNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "up", "AS");
-				numberOfNodes++;
+				AddNodePointerToList(*rootNodePointer, listFrontier, "up");
+				MapRepresentation[(*listFrontier.back()).GetXPosition()][(*listFrontier.back()).GetYPosition()] = "added to list";
 			}
 			if (LeftNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "left", "AS");
-				numberOfNodes++;
+				AddNodePointerToList(*rootNodePointer, listFrontier, "left");
+				MapRepresentation[(*listFrontier.back()).GetXPosition()][(*listFrontier.back()).GetYPosition()] = "added to list";
 			}
 			if (DownNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "down", "AS");
-				numberOfNodes++;
+				AddNodePointerToList(*rootNodePointer, listFrontier, "down");
+				MapRepresentation[(*listFrontier.back()).GetXPosition()][(*listFrontier.back()).GetYPosition()] = "added to list";
 			}
 			if (RightNodeIsValid(*rootNodePointer)) {
-				AddNodeToList(*rootNodePointer, listFrontier, "right", "AS");
-				numberOfNodes++;
+				AddNodePointerToList(*rootNodePointer, listFrontier, "right");
+				MapRepresentation[(*listFrontier.back()).GetXPosition()][(*listFrontier.back()).GetYPosition()] = "added to list";
 			}
-			listFrontier.sort([&](State firstNode, State secondNode)
-				{ return abs(chosenGoalState.first - firstNode.GetXPosition()) + abs(chosenGoalState.second - firstNode.GetYPosition()) + firstNode.GetCostToState() <
-				abs(chosenGoalState.first - secondNode.GetXPosition()) + abs(chosenGoalState.second - secondNode.GetYPosition()) + secondNode.GetCostToState(); });
-			ExpandLeafNodesGBFS(listFrontier, Path, numberOfNodes);
+			listFrontier.sort([&](State* firstNode, State* secondNode)
+				{ return abs(chosenGoalState.first - (*firstNode).GetXPosition()) + abs(chosenGoalState.second - (*firstNode).GetYPosition()) + (*firstNode).GetCostToState() <
+				abs(chosenGoalState.first - (*secondNode).GetXPosition()) + abs(chosenGoalState.second - (*secondNode).GetYPosition()) + (*secondNode).GetCostToState(); });
+			ExpandLeafNodesAS(listFrontier, Path, numberOfNodes);
 		}
 	}
 	else if (algoName == "CUS1") {
@@ -499,6 +501,9 @@ void MapStructure::ExpandLeafNodesDFS(stack<State>& frontier, stack<string>& Pat
 		}
 		else {
 			RemoveNodeFromStack(frontier.top(), frontier);
+			if (empty(frontier)) {
+				cout << "No solution found.";
+			}
 			ExpandLeafNodesDFS(frontier, Path, numberOfNodes);
 		}
 	}
@@ -509,8 +514,6 @@ void MapStructure::ExpandLeafNodesBFS(queue<State>& frontier, stack<string>& Pat
 		cout << "Initial position is goal state." << endl;
 	}
 	else {
-		State firstElementInFrontier = frontier.front();
-		tempParentNodePointer = &firstElementInFrontier;
 		if (UpNodeIsValid(frontier.front())) {
 			AddNodeToQueue(frontier.front(), frontier, "up");
 			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "discovered";
@@ -567,8 +570,9 @@ void MapStructure::ExpandLeafNodesGBFS(list<State>& frontier, stack<std::string>
 		MapRepresentation[frontier.front().GetXPosition()][frontier.front().GetYPosition()] = "discovered";
 		State firstElementInFrontier = frontier.front();
 		tempParentNodePointer = &firstElementInFrontier;
-		if (UpNodeIsValid(frontier.front())) {
-			AddNodeToList(frontier.front(), frontier, "up", "GBFS");
+		if (UpNodeIsValid(frontier.front()) && MapRepresentation[frontier.front().GetXPosition()][frontier.front().GetYPosition() - 1] != "added to list") {
+			AddNodeToList(frontier.front(), frontier, "up");
+			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "added to list";
 			numberOfNodes++;
 			if (IsGoalState(frontier.back())) {
 				cout << numberOfNodes << endl;
@@ -576,8 +580,9 @@ void MapStructure::ExpandLeafNodesGBFS(list<State>& frontier, stack<std::string>
 				return;
 			}
 		}
-		if (LeftNodeIsValid(frontier.front())) {
-			AddNodeToList(frontier.front(), frontier, "left", "GBFS");
+		if (LeftNodeIsValid(frontier.front()) && MapRepresentation[frontier.front().GetXPosition() - 1][frontier.front().GetYPosition()] != "added to list") {
+			AddNodeToList(frontier.front(), frontier, "left");
+			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "added to list";
 			numberOfNodes++;
 			if (IsGoalState(frontier.back())) {
 				cout << numberOfNodes << endl;
@@ -585,8 +590,9 @@ void MapStructure::ExpandLeafNodesGBFS(list<State>& frontier, stack<std::string>
 				return;
 			}
 		}
-		if (DownNodeIsValid(frontier.front())) {
-			AddNodeToList(frontier.front(), frontier, "down", "GBFS");
+		if (DownNodeIsValid(frontier.front()) && MapRepresentation[frontier.front().GetXPosition()][frontier.front().GetYPosition() + 1] != "added to list") {
+			AddNodeToList(frontier.front(), frontier, "down");
+			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "added to list";
 			numberOfNodes++;
 			if (IsGoalState(frontier.back())) {
 				cout << numberOfNodes << endl;
@@ -594,8 +600,9 @@ void MapStructure::ExpandLeafNodesGBFS(list<State>& frontier, stack<std::string>
 				return;
 			}
 		}
-		if (RightNodeIsValid(frontier.front())) {
-			AddNodeToList(frontier.front(), frontier, "right", "GBFS");
+		if (RightNodeIsValid(frontier.front()) && MapRepresentation[frontier.front().GetXPosition() + 1][frontier.front().GetYPosition()] != "added to list") {
+			AddNodeToList(frontier.front(), frontier, "right");
+			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "added to list";
 			numberOfNodes++;
 			if (IsGoalState(frontier.back())) {
 				cout << numberOfNodes << endl;
@@ -611,6 +618,64 @@ void MapStructure::ExpandLeafNodesGBFS(list<State>& frontier, stack<std::string>
 			cout << "No solution found.";
 		}
 		ExpandLeafNodesGBFS(frontier, Path, numberOfNodes);
+	}
+}
+
+void MapStructure::ExpandLeafNodesAS(list<State*>& frontier, stack<std::string>& Path, int& numberOfNodes) {
+	if (IsGoalState((*frontier.front()))) {
+		cout << "Initial position is goal state." << endl;
+	}
+	else {
+		MapRepresentation[(*frontier.front()).GetXPosition()][(*frontier.front()).GetYPosition()] = "discovered";
+		tempParentNodePointer = frontier.front();
+		if (UpNodeIsValid((*frontier.front())) && MapRepresentation[(*frontier.front()).GetXPosition()][(*frontier.front()).GetYPosition() - 1] != "added to list") {
+			AddNodePointerToList((*frontier.front()), frontier, "up");
+			numberOfNodes++;
+			MapRepresentation[(*frontier.back()).GetXPosition()][(*frontier.back()).GetYPosition()] = "added to list";
+			if (IsGoalState((*frontier.back()))) {
+				cout << numberOfNodes << endl;
+				PrintPath((*frontier.back()), Path);
+				return;
+			}
+		}
+		if (LeftNodeIsValid((*frontier.front())) && MapRepresentation[(*frontier.front()).GetXPosition() - 1][(*frontier.front()).GetYPosition()] != "added to list") {
+			AddNodePointerToList((*frontier.front()), frontier, "left");
+			numberOfNodes++;
+			MapRepresentation[(*frontier.back()).GetXPosition()][(*frontier.back()).GetYPosition()] = "added to list";
+			if (IsGoalState((*frontier.back()))) {
+				cout << numberOfNodes << endl;
+				PrintPath((*frontier.back()), Path);
+				return;
+			}
+		}
+		if (DownNodeIsValid((*frontier.front())) && MapRepresentation[(*frontier.front()).GetXPosition()][(*frontier.front()).GetYPosition() + 1] != "added to list") {
+			AddNodePointerToList((*frontier.front()), frontier, "down");
+			numberOfNodes++;
+			MapRepresentation[(*frontier.back()).GetXPosition()][(*frontier.back()).GetYPosition()] = "added to list";
+			if (IsGoalState((*frontier.back()))) {
+				cout << numberOfNodes << endl;
+				PrintPath((*frontier.back()), Path);
+				return;
+			}
+		}
+		if (RightNodeIsValid((*frontier.front())) && MapRepresentation[(*frontier.front()).GetXPosition() + 1][(*frontier.front()).GetYPosition()] != "added to list") {
+			AddNodePointerToList((*frontier.front()), frontier, "right");
+			numberOfNodes++;
+			MapRepresentation[(*frontier.back()).GetXPosition()][(*frontier.back()).GetYPosition()] = "added to list";
+			if (IsGoalState((*frontier.back()))) {
+				cout << numberOfNodes << endl;
+				PrintPath((*frontier.back()), Path);
+				return;
+			}
+		}
+		frontier.pop_front();
+		frontier.sort([&](State* firstNode, State* secondNode)
+			{ return abs(chosenGoalState.first - (*firstNode).GetXPosition()) + abs(chosenGoalState.second - (*firstNode).GetYPosition()) + (*firstNode).GetCostToState() <
+			abs(chosenGoalState.first - (*secondNode).GetXPosition()) + abs(chosenGoalState.second - (*secondNode).GetYPosition()) + (*secondNode).GetCostToState(); });
+		if (empty(frontier)) {
+			cout << "No solution found.";
+		}
+		ExpandLeafNodesAS(frontier, Path, numberOfNodes);
 	}
 }
 
@@ -677,7 +742,7 @@ void MapStructure::ExpandLeafNodesDLS(std::stack<State*>& frontier, std::stack<s
 				frontier.pop();
 				if (empty(frontier)) {
 					cout << "No solution found.";
-				} 
+				}
 				else {
 					ExpandLeafNodesDLS(frontier, Path, maxDepth, numberOfNodes);
 				}
