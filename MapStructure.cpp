@@ -514,6 +514,8 @@ void MapStructure::ExpandLeafNodesBFS(queue<State>& frontier, stack<string>& Pat
 		cout << "Initial position is goal state." << endl;
 	}
 	else {
+		State firstElementInFrontier = frontier.front();
+		tempParentNodePointer = &firstElementInFrontier;
 		if (UpNodeIsValid(frontier.front())) {
 			AddNodeToQueue(frontier.front(), frontier, "up");
 			MapRepresentation[frontier.back().GetXPosition()][frontier.back().GetYPosition()] = "discovered";

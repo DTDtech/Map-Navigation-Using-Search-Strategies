@@ -14,7 +14,6 @@ class MapStructure {
 public:
 	MapStructure(std::pair<int, int> RowsAndCols, std::pair<int, int> InitialPos, std::vector <std::pair<int, int>> Goalpos, std::map<std::pair<int, int>, std::pair<int, int>> WallPos);
 
-	//void printPositions();
 	void CreateMapRepresentation();
 
 	void ExpandFromRootNode(std::string algoName);
