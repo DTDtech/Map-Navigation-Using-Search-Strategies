@@ -8,12 +8,14 @@
 #include <queue>
 #include <stack>
 #include <list>
+#include <time.h>
 #include "State.h"
 using namespace std;
 
 MapStructure::MapStructure(pair<int, int> RowsAndCols, std::pair<int, int> InitialPos, vector <std::pair<int, int>> GoalPos, map<std::pair<int, int>, std::pair<int, int>> WallPos) :
 	RowsAndColumns(RowsAndCols), InitialPosition(InitialPos), GoalstatePositions(GoalPos), Walls(WallPos), tempParentNodePointer(NULL) {
 	//Randomly choose goal state from list of goal states to be used for searching
+	srand(time(NULL));
 	chosenGoalState = GoalstatePositions[rand() % GoalstatePositions.size()];
 
 	//Create map representation using two dimensional vector
@@ -251,11 +253,12 @@ void MapStructure::PrintPath(State& node, stack<string> Path) {
 			Path.push("right");
 			PrintPath(*node.parentNodePointer, Path);
 		}
-		else {
+		else { 
 			Path.push("cannot track parent node");
 		}
 	}
 	else {
+		cout << "Initial postition: " << InitialPosition.first << ";" << InitialPosition.second << " | " << "Goal state position: " << chosenGoalState.first << ";" << chosenGoalState.second << endl;
 		while (!empty(Path)) {
 			cout << Path.top() << "; ";
 			Path.pop();
@@ -265,8 +268,6 @@ void MapStructure::PrintPath(State& node, stack<string> Path) {
 }
 
 void MapStructure::ExpandFromRootNode(std::string algoName) {
-	chosenGoalState.first = 7;
-	chosenGoalState.second = 0;
 	State* rootNodePointer = new State(InitialPosition.first, InitialPosition.second);
 	tempParentNodePointer = rootNodePointer;
 	int numberOfNodes = 1;
